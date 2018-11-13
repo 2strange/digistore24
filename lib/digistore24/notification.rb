@@ -54,6 +54,12 @@ module Digistore24
       raise NotificationError, 'Request signature invalid!'
     end
 
+    def to_h
+      payload.to_h
+    end
+    alias_method :to_hash, :to_h
+
+
     private
 
     # Return the passphrase from the global configuration.

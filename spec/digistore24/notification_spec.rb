@@ -70,6 +70,12 @@ RSpec.describe Digistore24::Notification do
     end
   end
 
+  describe '#to_h' do
+    it 'returns the payload as hash' do
+      expect(notification.to_h).to eq(params)
+    end
+  end
+
   describe '#validate!' do
     context 'when signature is valid' do
       it 'does not raise an error' do

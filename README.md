@@ -1,4 +1,5 @@
 # Digistore24
+[![Build Status](https://travis-ci.org/henvo/digistore24.svg?branch=master)](https://travis-ci.org/henvo/digistore24)
 
 Digistore24 IPN integration library for rails and other web applications.
 
