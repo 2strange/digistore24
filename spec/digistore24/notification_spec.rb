@@ -1,7 +1,10 @@
 # frozen_string_literal: true
 
+require 'spec_helper'
+
 RSpec.describe Digistore24::Notification do
   let(:passphrase) { 'xxxxx' }
+  let(:sha_sign) { File.read("#{RSPEC_ROOT}/fixtures/sha_sign.txt").strip }
   let(:params) do
     {
       buyer_email: 'claus@domain-xyz.de',
@@ -9,12 +12,17 @@ RSpec.describe Digistore24::Notification do
       payment_id: 'PAYID-39-22012',
       transaction_amount: '17.00',
       transaction_currency: 'USD',
-      # TODO: Move to file fixture
-      sha_sign: '342770076245D14ED7DF4D2E5D82216D7EDF8F9E7969B5964C9C5DCB53E962BBECD545E90422B5329C69554FD8B1A7E7410736615FCA7FB5CBB3624CC016E4BC'
+      sha_sign: sha_sign
     }
   end
 
   let(:notification) { described_class.new(params) }
+
+  before do
+    Digistore24.configure do |config|
+      config.passphrase = 'xxxxx'
+    end
+  end
 
   it 'initializes without raising any error' do
     expect { notification }.not_to raise_error
@@ -32,7 +40,53 @@ RSpec.describe Digistore24::Notification do
 
   describe '#signature' do
     it 'calculates the correct signature' do
-      expect(notification.signature).to eq(notification.payload.sha_sign)
+      expect(notification.signature).to eq(sha_sign)
+    end
+  end
+
+  describe '#valid?' do
+    context 'when signatures are equal' do
+      it 'returns true' do
+        expect(notification.valid?).to eq(true)
+      end
+    end
+
+    context 'when signatures are not equa' do
+      before do
+        params[:foo] = 'bar'
+      end
+
+      it 'returns false' do
+        expect(notification.valid?).to eq(false)
+      end
+    end
+
+    context 'when payload signature is not given' do
+      let(:params) { {} }
+
+      it 'returns false' do
+        expect(notification.valid?).to eq(false)
+      end
+    end
+  end
+
+  describe '#validate!' do
+    context 'when signature is valid' do
+      it 'does not raise an error' do
+        expect { notification.validate! }.not_to raise_error
+      end
+    end
+
+    context 'when signature is not valid' do
+      before do
+        params[:foo] = 'bar'
+      end
+
+      it 'raises an error' do
+        expect { notification.validate! }
+          .to raise_error(Digistore24::NotificationError,
+                          'Request signature invalid!')
+      end
     end
   end
 end

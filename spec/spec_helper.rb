@@ -1,5 +1,10 @@
+require 'simplecov'
+SimpleCov.start
+
 require "bundler/setup"
 require "digistore24"
+
+RSPEC_ROOT = File.dirname __FILE__
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
