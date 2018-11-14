@@ -12,6 +12,8 @@ RSpec.describe Digistore24::Notification do
       payment_id: 'PAYID-39-22012',
       transaction_amount: '17.00',
       transaction_currency: 'USD',
+      empty_value: '',
+      false_value: false,
       sha_sign: sha_sign
     }
   end
