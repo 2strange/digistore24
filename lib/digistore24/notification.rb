@@ -28,7 +28,7 @@ module Digistore24
       params = payload.to_h
         .reject { |key, value| key == :sha_sign }
         .reject { |key, value| value == '' || value == false }.sort
-        .map { | key, value| "#{key}=#{value}#{passphrase}" }.join
+        .map { | key, value| "#{key.to_s.upcase}=#{value}#{passphrase}" }.join
 
       # Calculate SHA512 and upcase all letters, since Digistore will
       # also return upcased letters in the signature.
