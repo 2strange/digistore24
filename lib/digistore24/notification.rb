@@ -26,9 +26,9 @@ module Digistore24
       # Remove 'sha_sign' key from request params and concatenate all
       # key value pairs
       params = payload.to_h
-        .reject { |key, value| key == :sha_sign }
+        .reject { |key, value| [:sha_sign, 'sha_sign', :action, 'action', :controller, 'controller'].include?( key ) }
         .reject { |key, value| value == '' || value == false }.sort
-        .map { | key, value| "#{key.to_s.upcase}=#{value}#{passphrase}" }.join
+        .map { | key, value| "#{key}=#{value}#{passphrase}" }.join
 
       # Calculate SHA512 and upcase all letters, since Digistore will
       # also return upcased letters in the signature.
